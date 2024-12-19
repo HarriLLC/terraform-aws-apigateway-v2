@@ -105,6 +105,15 @@ variable "api_mapping_key" {
   default     = null
 }
 
+variable "additional_default_stage_api_mappings" {
+  description = "additional mapping for default stage"
+  type        = map(object({
+    domain_name = string
+    api_mapping_key = string
+  }))
+  default     = {}
+}
+
 ################################################################################
 # Authorizer(s)
 ################################################################################
@@ -244,7 +253,7 @@ variable "routes" {
     }), {})
 
     # Integration
-    integration = object({
+    integration = map(object({
       connection_id             = optional(string)
       vpc_link_key              = optional(string)
       connection_type           = optional(string)
@@ -276,7 +285,7 @@ variable "routes" {
         response_templates            = optional(map(string))
         template_selection_expression = optional(string)
       }), {})
-    })
+    }))
   }))
   default = {}
 }
