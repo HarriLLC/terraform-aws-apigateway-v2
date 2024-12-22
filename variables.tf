@@ -105,8 +105,8 @@ variable "api_mapping_key" {
   default     = null
 }
 
-variable "additional_default_stage_api_mappings" {
-  description = "additional mapping for default stage"
+variable "additional_stage_api_mappings" {
+  description = "Additional mapping for default stage"
   type        = map(object({
     domain_name = string
     api_mapping_key = string
@@ -231,6 +231,7 @@ variable "routes" {
     model_selection_expression = optional(string)
     operation_name             = optional(string)
     request_models             = optional(map(string), {})
+    integration_key            = optional(string)
     request_parameter = optional(object({
       request_parameter_key = optional(string)
       required              = optional(bool, false)
@@ -251,9 +252,15 @@ variable "routes" {
       response_models            = optional(map(string))
       route_response_key         = optional(string, "$default")
     }), {})
+  }))
+  default = {}
+}
 
-    # Integration
-    integration = map(object({
+# Integration
+
+variable "integrations" {
+  description = "Map of API gateway integrations"
+  type = map(object({
       connection_id             = optional(string)
       vpc_link_key              = optional(string)
       connection_type           = optional(string)
@@ -286,9 +293,8 @@ variable "routes" {
         template_selection_expression = optional(string)
       }), {})
     }))
-  }))
   default = {}
-}
+} 
 
 ################################################################################
 # Stage

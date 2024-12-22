@@ -125,11 +125,11 @@ resource "aws_apigatewayv2_api_mapping" "this" {
 # Additional Api mappings
 
 resource "aws_apigatewayv2_api_mapping" "this_additional" {
-  for_each = var.additional_default_stage_api_mappings
+  for_each = var.additional_stage_api_mappings
 
   api_id          = aws_apigatewayv2_api.this[0].id
   domain_name     = each.value["domain_name"]
-  stage           = aws_apigatewayv2_stage.default[0].id
+  stage           = aws_apigatewayv2_stage.this[0].id
   api_mapping_key = each.value["api_mapping_key"]
 }
 
@@ -221,7 +221,7 @@ resource "aws_apigatewayv2_route" "this" {
 
   route_key                           = each.key
   route_response_selection_expression = local.is_websocket ? each.value.route_response_selection_expression : null
-  target                              = "integrations/${aws_apigatewayv2_integration.this[coalesce(each.value.integration.key, each.key)].id}"
+  target                              = "integrations/${aws_apigatewayv2_integration.this[coalesce(each.value.integration_key, each.key)].id}"
 }
 
 ################################################################################
@@ -243,7 +243,7 @@ resource "aws_apigatewayv2_route_response" "this" {
 ################################################################################
 
 resource "aws_apigatewayv2_integration" "this" {
-  for_each = { for k, v in var.routes : k => v.integration if local.create_routes_and_integrations }
+  for_each = var.create && var.create_routes_and_integrations ? var.integrations : {}
 
   api_id = aws_apigatewayv2_api.this[0].id
 
