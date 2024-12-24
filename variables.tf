@@ -283,7 +283,7 @@ variable "integrations" {
       timeout_milliseconds          = optional(number)
       tls_config = optional(object({
         server_name_to_verify = optional(string)
-      }, null))
+      }), {})
 
       # Integration Response
       response = optional(object({
