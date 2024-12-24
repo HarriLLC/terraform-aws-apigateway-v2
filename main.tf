@@ -291,7 +291,11 @@ resource "aws_apigatewayv2_integration" "this" {
 ################################################################################
 
 resource "aws_apigatewayv2_integration_response" "this" {
-  for_each = { for key, value in var.integrations : key => value if try(value.response, null) != null }
+  
+  for_each = {
+    for key, value in var.integrations : key => value
+    if try(value.response.integration_response_key, null) != null
+  }
 
   api_id         = aws_apigatewayv2_api.this[0].id
   integration_id = aws_apigatewayv2_integration.this[each.key].id
