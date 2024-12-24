@@ -336,11 +336,11 @@ variable "stage_default_route_settings" {
 variable "stage_route_settings" {
   description = "Route settings for the stage"
   type = object({
-    data_trace_enabled       = optional(bool, true)
-    detailed_metrics_enabled = optional(bool, true)
-    logging_level            = optional(string)
-    throttling_burst_limit   = optional(number, 500)
-    throttling_rate_limit    = optional(number, 1000)
+    data_trace_enabled       = optional(bool, null)
+    detailed_metrics_enabled = optional(bool, null)
+    logging_level            = optional(string, null)
+    throttling_burst_limit   = optional(number, null)
+    throttling_rate_limit    = optional(number, null)
   })
   default = null
 }
