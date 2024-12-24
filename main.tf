@@ -373,15 +373,15 @@ resource "aws_apigatewayv2_stage" "this" {
   name          = var.stage_name
 
   dynamic "route_settings" {
-    for_each = { for k, v in var.routes : k => v if var.create_routes_and_integrations }
+    for_each = var.stage_route_settings != null ? [var.stage_route_settings] : []
 
     content {
-      data_trace_enabled       = local.is_websocket ? coalesce(route_settings.value.data_trace_enabled, var.stage_default_route_settings.data_trace_enabled) : null
-      detailed_metrics_enabled = coalesce(route_settings.value.detailed_metrics_enabled, var.stage_default_route_settings.detailed_metrics_enabled)
-      logging_level            = local.is_websocket ? coalesce(route_settings.value.logging_level, var.stage_default_route_settings.logging_level) : null
+      data_trace_enabled       = local.is_websocket ? route_settings.value.data_trace_enabled : null
+      detailed_metrics_enabled = route_settings.value.detailed_metrics_enabled
+      logging_level            = local.is_websocket ? route_settings.value.logging_level : null
       route_key                = route_settings.key
-      throttling_burst_limit   = coalesce(route_settings.value.throttling_burst_limit, var.stage_default_route_settings.throttling_burst_limit)
-      throttling_rate_limit    = coalesce(route_settings.value.throttling_rate_limit, var.stage_default_route_settings.throttling_rate_limit)
+      throttling_burst_limit   = route_settings.value.throttling_burst_limit
+      throttling_rate_limit    = route_settings.value.throttling_rate_limit
     }
   }
 

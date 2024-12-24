@@ -238,13 +238,6 @@ variable "routes" {
     }), {})
     route_response_selection_expression = optional(string)
 
-    # Route settings
-    data_trace_enabled       = optional(bool)
-    detailed_metrics_enabled = optional(bool)
-    logging_level            = optional(string)
-    throttling_burst_limit   = optional(number)
-    throttling_rate_limit    = optional(number)
-
     # Stage - Route response
     route_response = optional(object({
       create                     = optional(bool, false)
@@ -338,6 +331,18 @@ variable "stage_default_route_settings" {
     throttling_rate_limit    = optional(number, 1000)
   })
   default = {}
+}
+
+variable "stage_route_settings" {
+  description = "Route settings for the stage"
+  type = object({
+    data_trace_enabled       = optional(bool, true)
+    detailed_metrics_enabled = optional(bool, true)
+    logging_level            = optional(string)
+    throttling_burst_limit   = optional(number, 500)
+    throttling_rate_limit    = optional(number, 1000)
+  })
+  default = null
 }
 
 variable "stage_description" {
