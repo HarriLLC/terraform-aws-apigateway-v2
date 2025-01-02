@@ -339,6 +339,7 @@ variable "stage_route_settings" {
     data_trace_enabled       = optional(bool, null)
     detailed_metrics_enabled = optional(bool, null)
     logging_level            = optional(string, null)
+    route_key                = optional(string, null)
     throttling_burst_limit   = optional(number, null)
     throttling_rate_limit    = optional(number, null)
   })
