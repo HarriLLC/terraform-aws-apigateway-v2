@@ -373,13 +373,13 @@ resource "aws_apigatewayv2_stage" "this" {
   name          = var.stage_name
 
   dynamic "route_settings" {
-    for_each = var.stage_route_settings != null ? [var.stage_route_settings] : []
+    for_each = var.stage_route_settings != null ? var.stage_route_settings : {}
 
     content {
       data_trace_enabled       = local.is_websocket ? route_settings.value.data_trace_enabled : null
       detailed_metrics_enabled = route_settings.value.detailed_metrics_enabled
       logging_level            = local.is_websocket ? route_settings.value.logging_level : null
-      route_key                = coalesce(route_settings.value.route_key, route_settings.key)
+      route_key                = route_settings.key
       throttling_burst_limit   = route_settings.value.throttling_burst_limit
       throttling_rate_limit    = route_settings.value.throttling_rate_limit
     }
