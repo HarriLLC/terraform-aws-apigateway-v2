@@ -221,7 +221,7 @@ resource "aws_apigatewayv2_route" "this" {
 
   route_key                           = each.key
   route_response_selection_expression = local.is_websocket ? each.value.route_response_selection_expression : null
-  target                              = "integrations/${aws_apigatewayv2_integration.this[coalesce(each.value.integration_key, each.key)].id}"
+  target                              = each.value.integration_key != null ? "integrations/${aws_apigatewayv2_integration.this[each.value.integration_key].id}" : null
 }
 
 ################################################################################
