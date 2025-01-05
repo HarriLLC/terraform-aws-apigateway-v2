@@ -373,7 +373,7 @@ resource "aws_apigatewayv2_stage" "this" {
   name          = var.stage_name
 
   dynamic "route_settings" {
-    for_each = var.stage_route_settings != null ? var.stage_route_settings : {}
+    for_each = var.stage_route_settings != null && length(var.stage_route_settings) > 0 ? var.stage_route_settings : {}
 
     content {
       data_trace_enabled       = local.is_websocket ? route_settings.value.data_trace_enabled : null
