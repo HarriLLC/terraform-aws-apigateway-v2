@@ -105,6 +105,15 @@ variable "api_mapping_key" {
   default     = null
 }
 
+variable "additional_stage_api_mappings" {
+  description = "Additional mapping for default stage"
+  type        = map(object({
+    domain_name = string
+    api_mapping_key = string
+  }))
+  default     = {}
+}
+
 ################################################################################
 # Authorizer(s)
 ################################################################################
@@ -222,18 +231,12 @@ variable "routes" {
     model_selection_expression = optional(string)
     operation_name             = optional(string)
     request_models             = optional(map(string), {})
+    integration_key            = optional(string)
     request_parameter = optional(object({
       request_parameter_key = optional(string)
       required              = optional(bool, false)
     }), {})
     route_response_selection_expression = optional(string)
-
-    # Route settings
-    data_trace_enabled       = optional(bool)
-    detailed_metrics_enabled = optional(bool)
-    logging_level            = optional(string)
-    throttling_burst_limit   = optional(number)
-    throttling_rate_limit    = optional(number)
 
     # Stage - Route response
     route_response = optional(object({
@@ -242,9 +245,15 @@ variable "routes" {
       response_models            = optional(map(string))
       route_response_key         = optional(string, "$default")
     }), {})
+  }))
+  default = {}
+}
 
-    # Integration
-    integration = object({
+# Integration
+
+variable "integrations" {
+  description = "Map of API gateway integrations"
+  type = map(object({
       connection_id             = optional(string)
       vpc_link_key              = optional(string)
       connection_type           = optional(string)
@@ -267,7 +276,7 @@ variable "routes" {
       timeout_milliseconds          = optional(number)
       tls_config = optional(object({
         server_name_to_verify = optional(string)
-      }))
+      }), null)
 
       # Integration Response
       response = optional(object({
@@ -276,10 +285,9 @@ variable "routes" {
         response_templates            = optional(map(string))
         template_selection_expression = optional(string)
       }), {})
-    })
-  }))
+    }))
   default = {}
-}
+} 
 
 ################################################################################
 # Stage
@@ -322,6 +330,18 @@ variable "stage_default_route_settings" {
     throttling_burst_limit   = optional(number, 500)
     throttling_rate_limit    = optional(number, 1000)
   })
+  default = {}
+}
+
+variable "stage_route_settings" {
+  description = "Route settings for the stage"
+  type = map(object({
+    data_trace_enabled       = optional(bool, null)
+    detailed_metrics_enabled = optional(bool, null)
+    logging_level            = optional(string, null)
+    throttling_burst_limit   = optional(number, null)
+    throttling_rate_limit    = optional(number, null)
+  }))
   default = {}
 }
 

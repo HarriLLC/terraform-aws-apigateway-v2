@@ -107,6 +107,12 @@ resource "aws_apigatewayv2_domain_name" "this" {
   tags = var.tags
 }
 
+################################################################################
+# Api Mappings
+################################################################################
+
+# Default API mapping
+
 resource "aws_apigatewayv2_api_mapping" "this" {
   count = local.create_domain_name && local.create_stage ? 1 : 0
 
@@ -114,6 +120,17 @@ resource "aws_apigatewayv2_api_mapping" "this" {
   api_mapping_key = var.api_mapping_key
   domain_name     = aws_apigatewayv2_domain_name.this[0].id
   stage           = aws_apigatewayv2_stage.this[0].id
+}
+
+# Additional Api mappings
+
+resource "aws_apigatewayv2_api_mapping" "this_additional" {
+  for_each = var.additional_stage_api_mappings
+
+  api_id          = aws_apigatewayv2_api.this[0].id
+  domain_name     = each.value["domain_name"]
+  stage           = aws_apigatewayv2_stage.this[0].id
+  api_mapping_key = each.value["api_mapping_key"]
 }
 
 ################################################################################
@@ -204,7 +221,7 @@ resource "aws_apigatewayv2_route" "this" {
 
   route_key                           = each.key
   route_response_selection_expression = local.is_websocket ? each.value.route_response_selection_expression : null
-  target                              = "integrations/${aws_apigatewayv2_integration.this[each.key].id}"
+  target                              = each.value.integration_key != null ? "integrations/${aws_apigatewayv2_integration.this[each.value.integration_key].id}" : null
 }
 
 ################################################################################
@@ -226,7 +243,7 @@ resource "aws_apigatewayv2_route_response" "this" {
 ################################################################################
 
 resource "aws_apigatewayv2_integration" "this" {
-  for_each = { for k, v in var.routes : k => v.integration if local.create_routes_and_integrations }
+  for_each = var.create && var.create_routes_and_integrations ? var.integrations : {}
 
   api_id = aws_apigatewayv2_api.this[0].id
 
@@ -274,7 +291,11 @@ resource "aws_apigatewayv2_integration" "this" {
 ################################################################################
 
 resource "aws_apigatewayv2_integration_response" "this" {
-  for_each = { for k, v in var.routes : k => v.integration if local.create_routes_and_integrations && v.integration.response.integration_response_key != null }
+  
+  for_each = {
+    for key, value in var.integrations : key => value
+    if try(value.response.integration_response_key, null) != null
+  }
 
   api_id         = aws_apigatewayv2_api.this[0].id
   integration_id = aws_apigatewayv2_integration.this[each.key].id
@@ -352,15 +373,15 @@ resource "aws_apigatewayv2_stage" "this" {
   name          = var.stage_name
 
   dynamic "route_settings" {
-    for_each = { for k, v in var.routes : k => v if var.create_routes_and_integrations }
+    for_each = var.stage_route_settings != null ? var.stage_route_settings : {}
 
     content {
-      data_trace_enabled       = local.is_websocket ? coalesce(route_settings.value.data_trace_enabled, var.stage_default_route_settings.data_trace_enabled) : null
-      detailed_metrics_enabled = coalesce(route_settings.value.detailed_metrics_enabled, var.stage_default_route_settings.detailed_metrics_enabled)
-      logging_level            = local.is_websocket ? coalesce(route_settings.value.logging_level, var.stage_default_route_settings.logging_level) : null
+      data_trace_enabled       = local.is_websocket ? route_settings.value.data_trace_enabled : null
+      detailed_metrics_enabled = route_settings.value.detailed_metrics_enabled
+      logging_level            = local.is_websocket ? route_settings.value.logging_level : null
       route_key                = route_settings.key
-      throttling_burst_limit   = coalesce(route_settings.value.throttling_burst_limit, var.stage_default_route_settings.throttling_burst_limit)
-      throttling_rate_limit    = coalesce(route_settings.value.throttling_rate_limit, var.stage_default_route_settings.throttling_rate_limit)
+      throttling_burst_limit   = route_settings.value.throttling_burst_limit
+      throttling_rate_limit    = route_settings.value.throttling_rate_limit
     }
   }
 
