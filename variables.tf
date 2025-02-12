@@ -327,8 +327,8 @@ variable "stage_default_route_settings" {
     data_trace_enabled       = optional(bool, true)
     detailed_metrics_enabled = optional(bool, true)
     logging_level            = optional(string)
-    throttling_burst_limit   = optional(number, 500)
-    throttling_rate_limit    = optional(number, 1000)
+    throttling_burst_limit   = optional(number, null)
+    throttling_rate_limit    = optional(number, null)
   })
   default = {}
 }
