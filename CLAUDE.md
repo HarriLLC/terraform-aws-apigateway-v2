@@ -1,4 +1,7 @@
-# terraform-aws-apigateway-v2
+# CLAUDE.md
+
+`terraform-aws-apigateway-v2` — a reusable Harri Terraform **module**, published
+to the HCP private registry and consumed by exact pinned version.
 
 Harri's fork of `terraform-aws-modules/apigateway-v2`, republished to the HCP
 private registry. Upstream structure and inputs are kept; Harri consumers drive
