@@ -28,7 +28,7 @@ it from `TerraformAPIGateway/common/apis` and from the microservice module.
 ```hcl
 module "api_gateway" {
   source  = "app.terraform.io/harri/apigateway-v2/aws"
-  version = "1.0.1"
+  version = "x.y.z"   # pin the current published version
 
   # no required inputs — set at least these in practice
   name          = "prep-my-service"
@@ -37,15 +37,16 @@ module "api_gateway" {
 }
 ```
 
+> Take the current published version from the HCP private registry, or from the
+> `version` pinned beside this `source` in a consumer's `common/resources.tf`.
+> Consumers pin an exact version; ranges are never allowed.
+
 ## Required Versions
 
-| Component | Constraint |
-|---|---|
-| Terraform | `>= 1.3` |
-| AWS provider | `>= 5.37` |
-
-Source of truth: `versions.tf`. The provider constraint is intentionally a
-range so each consumer can pin an exact version.
+Read them from **`versions.tf`**: `required_version` for Terraform core, and each
+`required_providers` entry for the providers. They are not repeated here, so this
+guide cannot go stale when they change. A module's provider constraint is
+intentionally a range, so consumers can pin an exact version themselves.
 
 ## File Layout
 
@@ -130,14 +131,6 @@ terraform-aws-apigateway-v2/
 - `examples/vpc-link-http` — HTTP API integrating with private resources through a VPC link.
 - `examples/websocket` — WebSocket API with route responses.
 
-## Validate Changes Locally
-
-- Run `terraform fmt` before opening a PR (always — CI may fail otherwise).
-- From the module dir: `terraform init -upgrade=false`.
-- Run `terraform validate`.
-- **Do not run `terraform plan` or `terraform apply` locally** — modules
-  don't hold state on their own; that happens in the consumer stack.
-
 ## Publishing a New Version
 
 1. Make the changes; run `terraform fmt` + `terraform validate` (and
@@ -148,13 +141,13 @@ terraform-aws-apigateway-v2/
 3. Update `README.md` (and `CHANGELOG.md` if the module keeps one).
 4. Tag and push **that one tag**: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 5. HCP Registry auto-publishes from the tag; bump consumers' `version` pins to
-   the exact, `v`-stripped value (`3.1.0`, not `v3.1.0`).
+   the exact, `v`-stripped value (`X.Y.Z`, not `vX.Y.Z`).
 
 ## Conventions & Naming
 
-House style and module conventions load automatically from the
-`harri-tf-house-style` and `harri-tf-modules` rules whenever a `.tf` file in this
-module is edited — they are not repeated here.
+House style, module conventions, the local validate flow and the publish rules
+all load automatically from the `harri-tf-house-style` and `harri-tf-modules`
+rules whenever a `.tf` file in this module is edited — they are not repeated here.
 
 ### Project naming patterns
 
@@ -163,6 +156,6 @@ module is edited — they are not repeated here.
   recorded as A and AAAA aliases by default.
 - Every resource group is gated by its `create_*` flag — pass an existing
   `domain_name` with `create_domain_name = false` to attach to a shared domain.
-- Consumers pin `1.0.0` (TerraformAPIGateway) and `1.0.1` (the microservice
-  module); the version shown above is the highest in use. Upstream tags
-  (`v5.x`) do not correspond to the Harri registry versions.
+- Consumers are TerraformAPIGateway and the microservice module; each pins its
+  own exact version beside the `source` in its own config. Upstream tags do not
+  correspond to the Harri registry versions.
