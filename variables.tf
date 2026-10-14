@@ -4,6 +4,12 @@ variable "create" {
   default     = true
 }
 
+variable "region" {
+  description = "Region where the resource(s) will be managed. Defaults to the Region set in the provider configuration"
+  type        = string
+  default     = null
+}
+
 variable "tags" {
   description = "A mapping of tags to assign to API gateway resources"
   type        = map(string)
@@ -57,6 +63,12 @@ variable "fail_on_warnings" {
   default     = null
 }
 
+variable "ip_address_type" {
+  description = "The IP address types that can invoke the API. Valid values: ipv4, dualstack. Use ipv4 to allow only IPv4 addresses to invoke your API, or use dualstack to allow both IPv4 and IPv6 addresses to invoke your API. Defaults to ipv4."
+  type        = string
+  default     = null
+}
+
 variable "name" {
   description = "The name of the API. Must be less than or equal to 128 characters in length"
   type        = string
@@ -107,11 +119,11 @@ variable "api_mapping_key" {
 
 variable "additional_stage_api_mappings" {
   description = "Additional mapping for default stage"
-  type        = map(object({
-    domain_name = string
+  type = map(object({
+    domain_name     = string
     api_mapping_key = string
   }))
-  default     = {}
+  default = {}
 }
 
 ################################################################################
@@ -159,6 +171,12 @@ variable "hosted_zone_name" {
   default     = null
 }
 
+variable "private_zone" {
+  description = "Indicates the hosted zone being looked up is private.  Certificate validation will fail if this is set to true."
+  type        = bool
+  default     = false
+}
+
 variable "domain_name_certificate_arn" {
   description = "The ARN of an AWS-managed certificate that will be used by the endpoint for the domain name. AWS Certificate Manager is the only supported source"
   type        = string
@@ -204,7 +222,7 @@ variable "subdomain_record_types" {
 ################################################################################
 
 variable "create_certificate" {
-  description = "Whether to create a certificate for the domain"
+  description = "Whether to create a certificate for the domain.  Since certificate validate only works on public domains, this will be ignore if `private_zone` is set to `true`"
   type        = bool
   default     = true
 }
@@ -254,40 +272,40 @@ variable "routes" {
 variable "integrations" {
   description = "Map of API gateway integrations"
   type = map(object({
-      connection_id             = optional(string)
-      vpc_link_key              = optional(string)
-      connection_type           = optional(string)
-      content_handling_strategy = optional(string)
-      credentials_arn           = optional(string)
-      description               = optional(string)
-      method                    = optional(string)
-      subtype                   = optional(string)
-      type                      = optional(string, "AWS_PROXY")
-      uri                       = optional(string)
-      passthrough_behavior      = optional(string)
-      payload_format_version    = optional(string)
-      request_parameters        = optional(map(string), {})
-      request_templates         = optional(map(string), {})
-      response_parameters = optional(list(object({
-        mappings    = map(string)
-        status_code = string
-      })))
-      template_selection_expression = optional(string)
-      timeout_milliseconds          = optional(number)
-      tls_config = optional(object({
-        server_name_to_verify = optional(string)
-      }), null)
+    connection_id             = optional(string)
+    vpc_link_key              = optional(string)
+    connection_type           = optional(string)
+    content_handling_strategy = optional(string)
+    credentials_arn           = optional(string)
+    description               = optional(string)
+    method                    = optional(string)
+    subtype                   = optional(string)
+    type                      = optional(string, "AWS_PROXY")
+    uri                       = optional(string)
+    passthrough_behavior      = optional(string)
+    payload_format_version    = optional(string)
+    request_parameters        = optional(map(string), {})
+    request_templates         = optional(map(string), {})
+    response_parameters = optional(list(object({
+      mappings    = map(string)
+      status_code = string
+    })))
+    template_selection_expression = optional(string)
+    timeout_milliseconds          = optional(number)
+    tls_config = optional(object({
+      server_name_to_verify = optional(string)
+    }), null)
 
-      # Integration Response
-      response = optional(object({
-        content_handling_strategy     = optional(string)
-        integration_response_key      = optional(string)
-        response_templates            = optional(map(string))
-        template_selection_expression = optional(string)
-      }), {})
-    }))
+    # Integration Response
+    response = optional(object({
+      content_handling_strategy     = optional(string)
+      integration_response_key      = optional(string)
+      response_templates            = optional(map(string))
+      template_selection_expression = optional(string)
+    }), {})
+  }))
   default = {}
-} 
+}
 
 ################################################################################
 # Stage
