@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.1.1](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v6.1.0...v6.1.1) (2026-08-26)
+
+### Bug Fixes
+
+* Update GitHub Actions and pre-commit hook versions ([#154](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/154)) ([88432f2](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/88432f26f172dedbf65aec9ce707d94c71b30fc8))
+
+## [6.1.0](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v6.0.0...v6.1.0) (2026-01-08)
+
+### Features
+
+* Add provider meta user-agent, replacing static tag ([#148](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/148)) ([b5c0ee1](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/b5c0ee1e6a956c82d1d35245c88a6c9a57796f6f))
+
+## [6.0.0](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.5.0...v6.0.0) (2025-11-29)
+
+### ⚠ BREAKING CHANGES
+
+* Upgrade AWS provider and min required Terraform version to `6.0` and `1.5.7` respectively (#147)
+
+### Features
+
+* Upgrade AWS provider and min required Terraform version to `6.0` and `1.5.7` respectively ([#147](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/147)) ([dc798ef](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/dc798ef9b729544375d4b532f2e1b2e8cd304978))
+
+## [5.5.0](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.4.1...v5.5.0) (2025-11-29)
+
+### Features
+
+* Support option of private hosted zone for Route53 records ([#137](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/137)) ([52fa251](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/52fa251a4af8d29e63cce78f8d03b894885ce0de))
+
+## [5.4.1](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.4.0...v5.4.1) (2025-10-21)
+
+### Bug Fixes
+
+* Update CI workflow versions to latest ([#141](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/141)) ([fee61a5](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/fee61a50dd67ba8dcc8b16c782d0ab6ae8f0af2d))
+
+## [5.4.0](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.3.1...v5.4.0) (2025-10-17)
+
+
+### Features
+
+* Trigger redeploy when Authorizers change ([#139](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/139)) ([fe6fc44](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/fe6fc44d42a162723647aaf1e2a8d733552e2af8))
+
+## [5.3.1](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.3.0...v5.3.1) (2025-09-03)
+
+
+### Bug Fixes
+
+* Update stage_access_logs_cloudwatch_log_group outputs ([#138](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/138)) ([3fe488d](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/3fe488ddea4512483841ac8d0807dc706bdc6812))
+
+## [5.3.0](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.2.1...v5.3.0) (2025-05-01)
+
+
+### Features
+
+* Support `ip_address_type` ([#135](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/issues/135)) ([413c962](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/commit/413c9623f9cd908bd090aa6c87b2462f814acdae))
+
 ## [5.2.1](https://github.com/terraform-aws-modules/terraform-aws-apigateway-v2/compare/v5.2.0...v5.2.1) (2024-11-28)
 
 
