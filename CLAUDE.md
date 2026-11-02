@@ -8,7 +8,7 @@ private registry.
 - `aws_apigatewayv2_api` (HTTP or WebSocket, `protocol_type`), gated by `create`.
 - `aws_apigatewayv2_route` / `_integration` (plus `_route_response` / `_integration_response`) per `routes` / `integrations` entry, and `aws_apigatewayv2_authorizer` per `authorizers` entry.
 - `aws_apigatewayv2_stage` (`create_stage`), `aws_apigatewayv2_deployment` for WebSocket APIs only (`deploy_stage`), and an `aws_cloudwatch_log_group` for access logs unless `stage_access_log_settings.create_log_group = false`.
-- `aws_apigatewayv2_domain_name` + `aws_apigatewayv2_api_mapping` (`create_domain_name`), Route 53 alias records per domain/subdomain × `subdomain_record_types` (`create_domain_records`), and an ACM certificate via `terraform-aws-modules/acm` (`create_certificate`, public zones only).
+- `aws_apigatewayv2_domain_name` + `aws_apigatewayv2_api_mapping` (`create_domain_name`), Route 53 alias records per domain/subdomain × `subdomain_record_types` (`create_domain_records`), and an ACM certificate via `terraform-aws-modules/acm` (`create_certificate` **and** `create_domain_records`, public zones only).
 - `aws_apigatewayv2_vpc_link` per `vpc_links` entry; every group sits behind a `create_*` toggle so a caller can reuse an existing domain or stage.
 
 ## Registry Source
@@ -133,6 +133,22 @@ terraform-aws-apigateway-v2/
 - `examples/complete-http` — an HTTP API with every feature enabled
 - `examples/vpc-link-http` — an HTTP API reaching private targets through a VPC link
 - `examples/websocket` — a WebSocket API
+
+## Constraints
+
+- The ACM certificate is created only when `create_domain_name`,
+  `create_certificate` and `create_domain_records` are all `true` (and
+  `private_zone = false`). With `create_domain_records = false`, set
+  `create_certificate = false` and pass `domain_name_certificate_arn` —
+  otherwise the domain name is given the empty certificate ARN of an ACM module
+  that created nothing.
+- Changing `protocol_type` replaces the API, and every route, integration,
+  authorizer, stage and mapping attached to it.
+- Changing `domain_name` replaces the custom domain, its API mapping(s), the
+  Route 53 records and the ACM certificate.
+- This clone also tracks the `upstream` remote, so it holds upstream's release
+  tags — never `git push --tags`; it would push them to `origin`, where HCP
+  publishes every tag as a registry version.
 
 ## Conventions & Naming
 
