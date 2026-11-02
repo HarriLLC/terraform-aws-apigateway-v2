@@ -4,6 +4,9 @@ Shared conventions for Harri Terraform `.tf` files (workspaces, modules,
 generic). Repo-specific naming, module versions, environments, and the
 imports.tf-removal rule stay in each repo's own `CLAUDE.md`.
 
+- **`prep` is a separate AWS account.** Its account ID and ARNs differ from the
+  other environments: never copy an account ID or ARN from another env into
+  prep, and use the prep account's credentials for any AWS CLI check on prep.
 - **Data sources**: live in a separate `data.tf`, positioned before the
   resources that reference them.
 - **`moved {}` — change an address without destroying.** Renaming a resource,
