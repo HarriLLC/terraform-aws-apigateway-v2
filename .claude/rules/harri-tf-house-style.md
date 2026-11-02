@@ -4,12 +4,6 @@ Shared conventions for Harri Terraform `.tf` files (workspaces, modules,
 generic). Repo-specific naming, module versions, environments, and the
 imports.tf-removal rule stay in each repo's own `CLAUDE.md`.
 
-> Scope note: these are `.tf` / resource-block rules. Terraform Stacks files
-> (`*.tfcomponent.hcl` / `*.tfdeploy.hcl`) use component/deployment blocks and
-> have their own conventions in the Stacks template — several bullets here
-> (resource argument order, `data.tf`, variable/output field order) do not
-> apply to them.
-
 - **Data sources**: live in a separate `data.tf`, positioned before the
   resources that reference them.
 - **`moved {}` — change an address without destroying.** Renaming a resource,
@@ -31,6 +25,8 @@ imports.tf-removal rule stay in each repo's own `CLAUDE.md`.
   blocks live in a separate `removed.tf` beside `moved.tf`, need Terraform
   `>= 1.7`, and are deleted once the apply has landed in every workspace.
   Removing a resource also means removing its `import` block.
+- **Avoid `terraform state mv` and `terraform state rm`** — use `moved {}` and
+  `removed {}` blocks instead.
 - **Variables**: `type` + `description` required; snake_case. Use
   `optional(type, default)` for nested object fields.
 - **Variable block field order**: `type`, `description`, `default`,
@@ -85,13 +81,13 @@ imports.tf-removal rule stay in each repo's own `CLAUDE.md`.
 - **Indentation**: two spaces per nesting level. `terraform fmt` is run for you
   by the toolkit's hook each time a `.tf` file is written; CI enforces it too.
 - **Validate locally before opening a PR.** In the directory you changed, run
-  `terraform init -upgrade=false` (plain `init` only when there is no
-  `.terraform.lock.hcl`) then `terraform validate`. A local `terraform plan` is
+  `terraform init` (add `-upgrade` when a stale local `.terraform.lock.hcl`
+  blocks it — the file is not committed) then `terraform validate`. A local `terraform plan` is
   fine for verification wherever a backend is configured. **Never run
   `terraform apply` locally** — applies go through HCP Terraform or the
   project's pipeline. The type-specific rule for this project adds the detail.
 - **Comments**: use `#` for both single- and multi-line comments; only comment
   to clarify non-obvious intent.
 - **`.gitignore`**: exclude `*.tfstate`, `*.tfstate.backup`, `.terraform/`,
-  `*.tfplan`, and any `.tfvars` holding secrets. Keep `.terraform.lock.hcl`
-  committed.
+  `*.tfplan`, any `.tfvars` holding secrets, and `.terraform.lock.hcl` — the
+  lock file is not committed in workspaces or module repos.
