@@ -5,19 +5,11 @@ private registry.
 
 ## What This Module Provisions
 
-- `aws_apigatewayv2_api` (HTTP or WebSocket) with an optional `$default` stage
-  (`aws_apigatewayv2_stage`, plus `aws_apigatewayv2_deployment` for WebSocket)
-  and a CloudWatch access-log group.
-- Routes and integrations from the `routes` / `integrations` maps
-  (`aws_apigatewayv2_route`, `_integration`, and their `_response` variants),
-  plus `aws_apigatewayv2_authorizer` per `authorizers` entry.
-- A custom domain (`aws_apigatewayv2_domain_name`), its API mappings
-  (`aws_apigatewayv2_api_mapping`, including `additional_stage_api_mappings`),
-  and Route 53 A/AAAA records for the domain and `subdomains`.
-- Optional `aws_apigatewayv2_vpc_link` per `vpc_links` entry, and an ACM
-  certificate when `create_certificate`.
-- Every group is behind a `create_*` toggle so a caller can reuse an existing
-  domain or stage.
+- `aws_apigatewayv2_api` (HTTP or WebSocket, `protocol_type`), gated by `create`.
+- `aws_apigatewayv2_route` / `_integration` (plus `_route_response` / `_integration_response`) per `routes` / `integrations` entry, and `aws_apigatewayv2_authorizer` per `authorizers` entry.
+- `aws_apigatewayv2_stage` (`create_stage`), `aws_apigatewayv2_deployment` for WebSocket APIs only (`deploy_stage`), and an `aws_cloudwatch_log_group` for access logs unless `stage_access_log_settings.create_log_group = false`.
+- `aws_apigatewayv2_domain_name` + `aws_apigatewayv2_api_mapping` (`create_domain_name`), Route 53 alias records per domain/subdomain × `subdomain_record_types` (`create_domain_records`), and an ACM certificate via `terraform-aws-modules/acm` (`create_certificate`, public zones only).
+- `aws_apigatewayv2_vpc_link` per `vpc_links` entry; every group sits behind a `create_*` toggle so a caller can reuse an existing domain or stage.
 
 ## Registry Source
 
@@ -44,15 +36,14 @@ guide cannot go stale when they change.
 
 ```
 terraform-aws-apigateway-v2/
-├── CHANGELOG.md             # release notes
-├── LICENSE                  # upstream licence
-├── README.md                # usage example, inputs/outputs reference
-├── main.tf                  # the resources this module creates
+├── variables.tf             # inputs
+├── main.tf                  # the AWS resources this module creates
 ├── migrations.tf            # moved blocks from the upstream v4 → v5 refactor
 ├── outputs.tf               # what consumers can wire
-├── variables.tf             # inputs
 ├── versions.tf              # Terraform + provider constraints
-├── docs/                    # upgrade notes
+├── README.md                # usage example, inputs/outputs reference
+├── CHANGELOG.md             # release notes
+├── LICENSE                  # upstream licence
 ├── examples/complete-http/  # standalone example callers
 ├── examples/vpc-link-http/  # standalone example callers
 ├── examples/websocket/      # standalone example callers
@@ -147,7 +138,7 @@ terraform-aws-apigateway-v2/
 
 ### Project naming patterns
 
-- API name: `{env}-{service}` in Harri consumers; the default stage is `$default`.
+- API name: `{env}-{service}` in Harri consumers (the microservice module passes `${var.environment}-${var.microservice.name}`); the default stage is `$default`.
 - Custom domains are the FQDN (`gateway.harriprep.com`); `subdomains` are
   recorded as A and AAAA aliases by default.
 - Every resource group is gated by its `create_*` flag — pass an existing
