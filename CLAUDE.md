@@ -155,10 +155,10 @@ terraform-aws-apigateway-v2/
 ### Project naming patterns
 
 - API name: `{env}-{service}` in Harri consumers (the microservice module passes `${var.environment}-${var.microservice.name}`); the default stage is `$default`.
-- Custom domains are the FQDN (`gateway.harriprep.com`); `subdomains` are
+- Custom domains are the FQDN (`api.example.com`); `subdomains` are
   recorded as A and AAAA aliases by default.
 - Every resource group is gated by its `create_*` flag — pass an existing
   `domain_name` with `create_domain_name = false` to attach to a shared domain.
-- Consumers are TerraformAPIGateway and the microservice module; each pins its
+- Consumers are the API Gateway stack and the microservice module; each pins its
   own exact version beside the `source` in its own config. Upstream tags do not
   correspond to the Harri registry versions.
