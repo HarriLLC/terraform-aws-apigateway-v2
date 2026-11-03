@@ -3,6 +3,7 @@ module "wrapper" {
 
   for_each = var.items
 
+  additional_stage_api_mappings                      = try(each.value.additional_stage_api_mappings, var.defaults.additional_stage_api_mappings, {})
   api_key_selection_expression                       = try(each.value.api_key_selection_expression, var.defaults.api_key_selection_expression, null)
   api_mapping_key                                    = try(each.value.api_mapping_key, var.defaults.api_mapping_key, null)
   api_version                                        = try(each.value.api_version, var.defaults.api_version, null)
@@ -24,6 +25,7 @@ module "wrapper" {
   domain_name_ownership_verification_certificate_arn = try(each.value.domain_name_ownership_verification_certificate_arn, var.defaults.domain_name_ownership_verification_certificate_arn, null)
   fail_on_warnings                                   = try(each.value.fail_on_warnings, var.defaults.fail_on_warnings, null)
   hosted_zone_name                                   = try(each.value.hosted_zone_name, var.defaults.hosted_zone_name, null)
+  integrations                                       = try(each.value.integrations, var.defaults.integrations, {})
   ip_address_type                                    = try(each.value.ip_address_type, var.defaults.ip_address_type, null)
   mutual_tls_authentication                          = try(each.value.mutual_tls_authentication, var.defaults.mutual_tls_authentication, {})
   name                                               = try(each.value.name, var.defaults.name, "")
@@ -38,6 +40,7 @@ module "wrapper" {
   stage_default_route_settings                       = try(each.value.stage_default_route_settings, var.defaults.stage_default_route_settings, {})
   stage_description                                  = try(each.value.stage_description, var.defaults.stage_description, null)
   stage_name                                         = try(each.value.stage_name, var.defaults.stage_name, "$default")
+  stage_route_settings                               = try(each.value.stage_route_settings, var.defaults.stage_route_settings, {})
   stage_tags                                         = try(each.value.stage_tags, var.defaults.stage_tags, {})
   stage_variables                                    = try(each.value.stage_variables, var.defaults.stage_variables, {})
   subdomain_record_types                             = try(each.value.subdomain_record_types, var.defaults.subdomain_record_types, ["A", "AAAA"])
