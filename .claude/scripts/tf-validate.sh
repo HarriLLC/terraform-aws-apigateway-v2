@@ -31,14 +31,6 @@ grep -q '"stop_hook_active": *true' && exit 0      # already ran for this stop
 command -v terraform >/dev/null 2>&1 || exit 0
 cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
 
-# Each validated directory needs its own init. A shared plugin cache downloads
-# each provider once instead of once per directory. A cache the user already set
-# is kept.
-if [ -z "$TF_PLUGIN_CACHE_DIR" ]; then
-  TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
-  mkdir -p "$TF_PLUGIN_CACHE_DIR" 2>/dev/null && export TF_PLUGIN_CACHE_DIR || unset TF_PLUGIN_CACHE_DIR
-fi
-
 regen='wrappers/ is generated; regenerate it with: pre-commit run terraform_wrapper_module_for_each -a'
 
 has_tf() { ls "$1"/*.tf >/dev/null 2>&1; }
